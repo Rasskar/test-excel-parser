@@ -1,0 +1,38 @@
+version: '3.8'
+services:
+  laravel.test:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+      target: dev # Используем 'dev' target для добавления Xdebug
+      args:
+        WWWGROUP: '${WWWGROUP}'
+    image: sail-8.2/app
+    container_name: app-excel-parser
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    ports:
+      - '${APP_PORT:-80}:8000'
+      - '${REVERB_PORT:-8080}:8080'
+      - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
+    environment:
+      WWWUSER: '${WWWUSER}'
+      LARAVEL_SAIL: 1
+      IGNITION_LOCAL_SITES_PATH: '${PWD}'
+      DB_CONNECTION: 'pgsql'
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_HOST: redis
+      XDEBUG_MODE: debug,develop
+      XDEBUG_CONFIG: "client_host=host.docker.internal client_port=9003"
+    volumes:
+      - ./:/var/www/html
+      - ./docker/php/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf
+    depends_on:
+      - db
+      - redis
+      - mailhog
+    networks:
+      - excel-parser-network
