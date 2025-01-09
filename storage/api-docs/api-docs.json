@@ -1,0 +1,215 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API Documentation",
+        "description": "Документация для API",
+        "contact": {
+            "email": "alekscygankov20@gmail.com"
+        },
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/v1/excel-parser/result": {
+            "get": {
+                "summary": "Получить результат обработки файла",
+                "description": "Возвращает данные из обработанного файла, сгруппированные по дате. Каждая дата содержит массив объектов с `id` и `name`.",
+                "operationId": "4281f81224cbd7deab7984ee8cb62141",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": [
+                                        {
+                                            "description": "Уникальный идентификатор строки",
+                                            "type": "integer",
+                                            "property": "id"
+                                        },
+                                        {
+                                            "description": "Имя строки",
+                                            "type": "string",
+                                            "property": "name"
+                                        }
+                                    ]
+                                },
+                                "example": {
+                                    "2024-05-29": [
+                                        {
+                                            "id": 1,
+                                            "name": "Пример 1"
+                                        },
+                                        {
+                                            "id": 2,
+                                            "name": "Пример 2"
+                                        }
+                                    ],
+                                    "2024-05-30": [
+                                        {
+                                            "id": 3,
+                                            "name": "Пример 3"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Неавторизованный запрос."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ошибка: невозможно получить результат."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "basicAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/excel-parser/upload": {
+            "post": {
+                "summary": "Загрузить Excel-файл для обработки",
+                "description": "Этот эндпоинт позволяет загрузить Excel-файл, который будет обработан. Возвращает сообщение об успешной загрузке и путь к файлу.",
+                "operationId": "943e18165fe3c2a0e970614fb892f347",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "file"
+                                ],
+                                "properties": {
+                                    "file": {
+                                        "description": "Excel-файл для загрузки",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Успешная загрузка",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "message": {
+                                                    "type": "string",
+                                                    "example": "Файл успешно загружен и передан на обработку."
+                                                },
+                                                "file_path": {
+                                                    "type": "string",
+                                                    "example": "uploads/qBUmQeODzsIAqcG58husvHLUjEUO223J9PthYNUp.xlsx"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ошибка при загрузке файла."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Неавторизованный запрос."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Ошибка: невозможно получить результат."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "basicAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "basicAuth": {
+                "type": "http",
+                "description": "Введите логин и пароль. Для теста добавлен пользователь: Username: admin@example.com, Password: password",
+                "scheme": "basic"
+            }
+        }
+    }
+}

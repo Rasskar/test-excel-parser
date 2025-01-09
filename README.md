@@ -23,6 +23,9 @@ cp .env.example .env
 ./sail artisan migrate
 ```
 ```bash
+./sail artisan db:seed
+```
+```bash
 ./sail artisan l5-swagger:generate
 ```
 ```bash
